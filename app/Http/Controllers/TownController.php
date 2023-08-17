@@ -40,7 +40,7 @@ class TownController extends Controller
 
     function readalltowns()
     {
-        $towns = town::get(['id', 'name']);
+        $towns = town::get(['id', 'name', 'subcountyid']);
 
         if($towns)
             return response()->json($towns);
@@ -50,13 +50,18 @@ class TownController extends Controller
 
     function updatetown(Request $request)
     {
+        $request->validate([
+            'id' => 'required',
+            'name' => 'required'
+        ]);
+        
         $townid = $request->input(key: 'id');
 
         $town = town::find($townid);
 
         if($town)
         {
-            $town = $request;
+            $town->name = $request->input(key: 'name');
             $town->save();
 
             return response()->json($town);

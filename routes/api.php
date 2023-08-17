@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\CarController;
 use App\Http\Controllers\PhoneController;
 use App\Http\Controllers\subcountycontroller;
 use App\Http\Controllers\TownController;
@@ -55,3 +56,5 @@ Route::get('/getUser', [subcountycontroller::class, 'getuser']);
 Route::get('/getSubcountyName', [subcountycontroller::class, 'getsubcountyname']);
 Route::get('/getUserSubcounty', [subcountycontroller::class, 'getusersubcounty']);
 
+
+Route::post('/createCar', [CarController::class, 'createcar']);
