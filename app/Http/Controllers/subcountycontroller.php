@@ -56,7 +56,8 @@ class subcountycontroller extends Controller
 
     function updatesubcounty(Request $request){
         $request->validate([
-            'id' => 'required'
+            'id' => 'required',
+            'name' => 'required'
         ]);
 
         $subcounty = subcounty::find($request->id);

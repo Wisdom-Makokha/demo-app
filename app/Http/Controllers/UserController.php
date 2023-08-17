@@ -34,6 +34,10 @@ class UserController extends Controller
 
     function readauser(Request $request)
     {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
         $userid = $request->input(key: 'id');
 
         $user = User::select('users.*')
@@ -57,13 +61,22 @@ class UserController extends Controller
 
     function updateuser(Request $request)
     {
-        $request->input(key: 'id');
+        $request->validate([
+            'id' => 'required',
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'townid' => 'required'
+        ]);
 
-        $user = User::find($request->id);
+        $user = User::find($request->input(key: 'id'));
 
         if($user)
         {
-            $user = $request;
+            $user->name = $request->input(key: 'name');
+            $user->email = $request->input(key: 'email');
+            $user->password = $request->input(key: 'password');
+            $user->townid = $request->input(key: 'townid');
             $user->save();
 
             return response()->json($user);

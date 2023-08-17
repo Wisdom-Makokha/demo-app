@@ -40,6 +40,7 @@ class PhoneController extends Controller
 
     function readaphone(Request $request)
     {
+        
         $phonenumber = $request->input(key: 'phonenumber');
 
         $phone = phone::select('phones.phonenumber, phones.userid')
