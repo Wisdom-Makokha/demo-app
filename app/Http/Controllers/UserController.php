@@ -101,4 +101,16 @@ class UserController extends Controller
         else
             return response()->json(null);
     }
+
+    function getuserphonetown(){
+        $users = User::join('phones', 'users.id', 'phones.userid')
+        ->join('towns', 'towns.id', 'users.townid')
+        ->select('users.id', 'users.name as username', 'users.email', 'phones.phonenumber', 'towns.name as town')
+        ->get();
+
+        if($users)
+            return response()->json($users);
+        else
+            return response()->json(null);
+    }
 }

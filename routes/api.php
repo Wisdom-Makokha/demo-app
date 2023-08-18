@@ -30,6 +30,7 @@ Route::get('/readAllUsers', [UserController::class, 'readallusers']);
 Route::get('/readAUser', [UserController::class, 'readauser']);
 Route::put('/updateUser', [UserController::class, 'updateuser']);
 Route::delete('/deleteUser', [UserController::class, 'deleteuser']);
+Route::get('getUserPhoneTown', [UserController::class, 'getuserphonetown']);
 
 //Routes for the phone model
 Route::post('/createPhone', [PhoneController::class, 'createphone']);
