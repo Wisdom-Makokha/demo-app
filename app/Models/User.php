@@ -24,7 +24,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'townid'
+        'townid',
+        'roleid'
     ];
 
     /**
@@ -53,5 +54,9 @@ class User extends Authenticatable
 
     public function town():BelongsTo{
         return $this->belongsTo(related: town::class, foreignKey: 'townid', ownerKey: 'id');
+    }
+
+    public function role() :BelongsTo{
+        return $this->belongsTo(related: Role::class, foreignKey: 'roleid', ownerKey: 'id');
     }
 }
