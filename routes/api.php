@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\PhoneController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\subcountycontroller;
 use App\Http\Controllers\TownController;
 use App\Http\Controllers\UserController;
@@ -57,5 +58,13 @@ Route::get('/getUser', [subcountycontroller::class, 'getuser']);
 Route::get('/getSubcountyName', [subcountycontroller::class, 'getsubcountyname']);
 Route::get('/getUserSubcounty', [subcountycontroller::class, 'getusersubcounty']);
 
-
+// routes for the car model
 Route::post('/createCar', [CarController::class, 'createcar']);
+
+//routes for the roles model
+Route::post('/createRole', [RoleController::class, 'createrole']);
+Route::get('/readARole', [RoleController::class, 'readarole']);
+Route::get('/readRoles', [RoleController::class, 'readroles']);
+Route::put('/updateRole', [RoleController::class, 'updaterole']);
+Route::delete('/deleteRole', [RoleController::class, 'deleterole']);
+Route::get('/getUserRole', [RoleController::class, 'getuserrole']);

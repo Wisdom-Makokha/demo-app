@@ -87,6 +87,10 @@ class UserController extends Controller
 
     function deleteuser(Request $request)
     {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
         $userid = $request->input(key: 'id');
 
         $user = User::find($userid);
@@ -94,8 +98,11 @@ class UserController extends Controller
         if($user)
         {
             $deleteduser = $user;
+            $phones = User::find($userid)->phone;
 
             $user->delete();
+            $phones->delete();
+
             return response()->json($deleteduser);
         }
         else

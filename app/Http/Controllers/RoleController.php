@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -20,7 +21,7 @@ class RoleController extends Controller
 
         $checkrole = Role::find($role->id);
 
-        if($checkrole)
+        if ($checkrole)
             return response()->json($role);
         else
             return response()->json(null);
@@ -34,7 +35,7 @@ class RoleController extends Controller
 
         $role = Role::find($request->id);
 
-        if($role)
+        if ($role)
             return response()->json($role);
         else
             return response()->json(null);
@@ -44,7 +45,7 @@ class RoleController extends Controller
     {
         $roles = Role::all();
 
-        if($roles)
+        if ($roles)
             return response()->json($roles);
         else
             return response()->json(null);
@@ -59,14 +60,12 @@ class RoleController extends Controller
 
         $checkrole = Role::find($request->id);
 
-        if($checkrole)
-        {
+        if ($checkrole) {
             $checkrole->name = $request->name;
             $checkrole->save();
 
             return response()->json($checkrole);
-        }
-        else
+        } else
             return response()->json(null);
     }
 
@@ -78,12 +77,30 @@ class RoleController extends Controller
 
         $checkdelete = Role::find($request->id);
 
-        if($checkdelete)
-        {
+        if ($checkdelete) {
             $deletedrole = $checkdelete;
             $checkdelete->delete();
 
             return response()->json($deletedrole);
+        } else
+            return response()->json(null);
+    }
+
+    function getuserrole(Request $request)
+    {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
+        $userid = $request->id;
+        $checkuser = User::find($userid);
+
+        if ($checkuser) {
+            $user = User::join('roles', 'users.roleid', 'roles.id')
+                ->select('users.name', 'roles.name')
+                ->where('users.id', $userid);
+
+            return response()->json($user);
         }
         else
             return response()->json(null);
