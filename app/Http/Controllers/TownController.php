@@ -11,8 +11,8 @@ class TownController extends Controller
     function createtown(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'subcountyid' => 'required'
+            'name' => 'required|string',
+            'subcountyid' => 'required|integer|exists:subcounty,id'
         ]);
 
         $town = town::create([
@@ -20,32 +20,48 @@ class TownController extends Controller
             'subcountyid' => $request->subcountyid
         ]);
 
-        if($town)
-            return response()->json($town);
+        if ($town)
+            return response([
+                'requestdata' => $town
+            ], 201);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'town not created'
+            ], 500);
     }
 
     function readatown(Request $request)
     {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
         $townid = $request->input(key: 'id');
 
         $town = town::find($townid);
 
-        if($town)
-            return response()->json($town);
+        if ($town)
+            return response([
+                'requestdata' => $town
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'town not found'
+            ], 404);
     }
 
     function readalltowns()
     {
         $towns = town::get(['id', 'name', 'subcountyid']);
 
-        if($towns)
-            return response()->json($towns);
+        if ($towns)
+            return response([
+                'requestdata' => $towns
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'no towns found'
+            ], 404);
     }
 
     function updatetown(Request $request)
@@ -54,20 +70,22 @@ class TownController extends Controller
             'id' => 'required',
             'name' => 'required'
         ]);
-        
+
         $townid = $request->input(key: 'id');
 
         $town = town::find($townid);
 
-        if($town)
-        {
+        if ($town) {
             $town->name = $request->input(key: 'name');
             $town->save();
 
-            return response()->json($town);
-        }
-        else
-            return response()->json(null);
+            return response([
+                'requestdata' => $town
+            ], 200);
+        } else
+            return response([
+                'message' => 'no such town found'
+            ], 404);
     }
 
     function deletetown(Request $request)
@@ -76,14 +94,16 @@ class TownController extends Controller
 
         $town = town::find($townid);
 
-        if($town)
-        {
+        if ($town) {
             $deletedtown = $town;
             $town->delete();
 
-            return response()->json($town);
-        }
-        else
-            return response()->json(null);
+            return response([
+                'requestdata' => $deletedtown
+            ], 200);
+        } else
+            return response([
+                'message' => 'no such town found'
+            ], 404);
     }
 }

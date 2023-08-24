@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -11,10 +12,10 @@ class UserController extends Controller
     function createuser(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'townid' => 'required'
+            'name' => 'required|string',
+            'email' => 'required|string|unique:users,email',
+            'password' => 'required|string|confirmed',
+            'townid' => 'required|exists:towns,id'
         ]);
 
         $user = User::create([
@@ -26,10 +27,16 @@ class UserController extends Controller
 
         $checkuser = User::find($user->id);
 
-        if($checkuser)
-            return response()->json($user);
-        else
-            return response()->json(null);
+        if ($checkuser) {
+            $token = $user->createToken('usertoken')->plainTextToken;
+
+            return response([
+                'token' => $token
+            ], 201);
+        } else
+            return response([
+                'message' => 'user not created'
+            ], 500);
     }
 
     function readauser(Request $request)
@@ -41,48 +48,59 @@ class UserController extends Controller
         $userid = $request->input(key: 'id');
 
         $user = User::select('users.*')
-        ->where('users.id', $userid)
-        ->get();
+            ->where('users.id', $userid)
+            ->get();
 
-        if($user)
-            return response()->json($user);
+        if ($user)
+            return response([
+                'requestdata' => $user
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'no such user found',
+            ], 404);
     }
 
-    function readallusers(){
+    function readallusers()
+    {
         $users = User::get();
 
-        if($users)
-            return response()->json($users);
+        if ($users)
+            return response([
+                'requestdata' => $users
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'no users found'
+            ], 404);
     }
 
     function updateuser(Request $request)
     {
         $request->validate([
             'id' => 'required',
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'townid' => 'required'
+            'name' => 'required|string',
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+            'townid' => 'required|integer'
         ]);
 
         $user = User::find($request->input(key: 'id'));
 
-        if($user)
-        {
+        if ($user) {
             $user->name = $request->input(key: 'name');
             $user->email = $request->input(key: 'email');
             $user->password = $request->input(key: 'password');
             $user->townid = $request->input(key: 'townid');
             $user->save();
 
-            return response()->json($user);
-        }
-        else
-            return response()->json(null);
+            return response([
+                'reqeustdata' => $user
+            ], 200);
+        } else
+            return response([
+                'message' => 'no such user found',
+            ], 404);
     }
 
     function deleteuser(Request $request)
@@ -95,29 +113,62 @@ class UserController extends Controller
 
         $user = User::find($userid);
 
-        if($user)
-        {
+        if ($user) {
             $deleteduser = $user;
             $phones = User::find($userid)->phone;
 
             $user->delete();
             $phones->delete();
 
-            return response()->json($deleteduser);
-        }
-        else
-            return response()->json(null);
+            return response([
+                'requestdata' => $deleteduser
+            ], 200);
+        } else
+            return response([
+                'message' => 'user not found'
+            ], 404);
     }
 
-    function getuserphonetown(){
+    function getuserphonetown()
+    {
         $users = User::join('phones', 'users.id', 'phones.userid')
-        ->join('towns', 'towns.id', 'users.townid')
-        ->select('users.id', 'users.name as username', 'users.email', 'phones.phonenumber', 'towns.name as town')
-        ->get();
+            ->join('towns', 'towns.id', 'users.townid')
+            ->select('users.id', 'users.name as username', 'users.email', 'phones.phonenumber', 'towns.name as town')
+            ->get();
 
-        if($users)
-            return response()->json($users);
+        if ($users)
+            return response([
+                'requestdata' => $users
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'data not found'
+            ], 404);
+    }
+
+    function userlogin(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'password' => 'required|string'
+        ]);
+
+        $username = $request->name;
+        $password = $request->password;
+
+        $user = User::where('name', $username)->first();
+
+        if (!$user || !Hash::check($password, $user->password))
+            return response(['message' => 'Bad credentials'], 401);
+        else {
+            $token = $user->createToken('usertoken')->plainTextToken;
+
+            $response = [
+                'requestdata' => $user,
+                'token' => $token
+            ];
+
+            return response($response, 201);
+        }
     }
 }

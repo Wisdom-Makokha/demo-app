@@ -22,9 +22,13 @@ class RoleController extends Controller
         $checkrole = Role::find($role->id);
 
         if ($checkrole)
-            return response()->json($role);
+            return response([
+                'requestdata' => $checkrole
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'role not created'
+            ], 500);
     }
 
     function readarole(Request $request)
@@ -33,22 +37,30 @@ class RoleController extends Controller
             'id' => 'required'
         ]);
 
-        $role = Role::find($request->id);
+        $role = Role::find($request->input(key: 'id'));
 
         if ($role)
-            return response()->json($role);
+            return response([
+                'requestdata' => $role
+            ]);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'no such role found'
+            ], 404);
     }
 
-    function readroles()
+    function readallroles()
     {
         $roles = Role::all();
 
         if ($roles)
-            return response()->json($roles);
+            return response([
+                'requestdata' => $roles
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'no roles found'
+            ], 404);
     }
 
     function updaterole(Request $request)
@@ -64,9 +76,13 @@ class RoleController extends Controller
             $checkrole->name = $request->name;
             $checkrole->save();
 
-            return response()->json($checkrole);
+            return response([
+                'requestdata' => $checkrole
+            ]);
         } else
-            return response()->json(null);
+            return response([
+                'message' => 'no such role found'
+            ], 404);
     }
 
     function deleterole(Request $request)
@@ -81,9 +97,13 @@ class RoleController extends Controller
             $deletedrole = $checkdelete;
             $checkdelete->delete();
 
-            return response()->json($deletedrole);
+            return response([
+                'requestdata' => $deletedrole
+            ], 200);
         } else
-            return response()->json(null);
+            return response([
+                'message' => 'no such rolw found'
+            ]);
     }
 
     function getuserrole(Request $request)
@@ -100,9 +120,12 @@ class RoleController extends Controller
                 ->select('users.name', 'roles.name')
                 ->where('users.id', $userid);
 
-            return response()->json($user);
-        }
-        else
-            return response()->json(null);
+            return response([
+                'requestdata' => $user
+            ], 200);
+        } else
+            return response([
+                'message' => 'no data found'
+            ], 404);
     }
 }

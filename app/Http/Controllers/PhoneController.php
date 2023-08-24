@@ -22,35 +22,46 @@ class PhoneController extends Controller
 
         $checkphone = phone::find($phone->id);
 
-        if($checkphone)
-            return response()->json($phone);
+        if ($checkphone)
+            return response([
+                'requestdata' => $checkphone
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'phonenumber not added'
+            ], 500);
     }
 
     function readallphones()
     {
         $phones = phone::all();
 
-        if($phones)
-            return response()->json($phones);
+        if ($phones)
+            return response([
+                'requestdata' => $phones
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'no phonenumbers found'
+            ], 404);
     }
 
     function readaphone(Request $request)
     {
-        
         $phonenumber = $request->input(key: 'phonenumber');
 
         $phone = phone::select('phones.phonenumber, phones.userid')
-        ->where('phones.phonenumber', $phonenumber)
-        ->get();
+            ->where('phones.phonenumber', $phonenumber)
+            ->get();
 
-        if($phone)
-            return response()->json($phone);
+        if ($phone)
+            return response([
+                'requestdata' => $phone
+            ], 200);
         else
-            return response()->json(null);
+            return response([
+                'message' => 'no such phonenumber found'
+            ], 404);
     }
 
     function deletephone(Request $request)
@@ -58,17 +69,19 @@ class PhoneController extends Controller
         $phonenumber = $request->input(key: 'phonenumber');
 
         $phone = phone::select('phones.*')
-        ->where('phones.phonenumber', $phonenumber)
-        ->get();
+            ->where('phones.phonenumber', $phonenumber)
+            ->get();
 
-        if($phone)
-        {
+        if ($phone) {
             $deletedphone = $phone;
             $phone->delete();
 
-            return response()->json($phone);
-        }
-        else
-            return response()->json(null);
+            return response([
+                'requestdata' => $deletedphone
+            ], 200);
+        } else
+            return response([
+                'message' => 'no such phonenumber found'
+            ], 404);
     }
 }
