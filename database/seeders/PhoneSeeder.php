@@ -13,6 +13,6 @@ class PhoneSeeder extends Seeder
     public function run(): void
     {
         //
-        \App\Models\phone::factory(33)->create();
+        \App\Models\phone::factory(184)->create();
     }
 }

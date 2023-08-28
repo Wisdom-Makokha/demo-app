@@ -11,8 +11,8 @@ class PhoneController extends Controller
     function createphone(Request $request)
     {
         $request->validate([
-            'phonenumber' => 'required',
-            'userid' => 'required'
+            'phonenumber' => 'required|unique',
+            'userid' => 'required|integer|exists:users,id'
         ]);
 
         $phone = phone::create([

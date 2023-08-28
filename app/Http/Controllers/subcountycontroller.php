@@ -12,7 +12,7 @@ class subcountycontroller extends Controller
     function createsubcounty(Request $request)
     {
         $request->validate([
-            'name' => 'required'
+            'name' => 'required|unique'
         ]);
 
         $subcounties = subcounty::create([
@@ -69,7 +69,7 @@ class subcountycontroller extends Controller
     {
         $request->validate([
             'id' => 'required',
-            'name' => 'required'
+            'name' => 'required|unique'
         ]);
 
         $subcounty = subcounty::find($request->input(key: 'id'));

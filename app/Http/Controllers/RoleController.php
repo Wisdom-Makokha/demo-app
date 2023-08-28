@@ -12,7 +12,7 @@ class RoleController extends Controller
     function createrole(Request $request)
     {
         $request->validate([
-            'name' => 'required'
+            'name' => 'required|unique'
         ]);
 
         $role = Role::create([
@@ -67,7 +67,7 @@ class RoleController extends Controller
     {
         $request->validate([
             'id' => 'required',
-            'name' => 'required'
+            'name' => 'required|unique'
         ]);
 
         $checkrole = Role::find($request->id);

@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //Sanctum
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //routes for the user model
+    Route::post('/userLogout', [UserController::class, 'userlogout']);
     Route::get('/readAllUsers', [UserController::class, 'readallusers']);
     Route::get('/readAUser', [UserController::class, 'readauser']);
     Route::put('/updateUser', [UserController::class, 'updateuser']);
@@ -62,7 +63,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 //route for the user creation and login
 Route::post('/createUser', [UserController::class, 'createuser']);
-Route::get('/userLogin', [UserController::class, 'userlogin']);
+Route::post('/userLogin', [UserController::class, 'userlogin']);
 
 //not all read requests should not be completely blocked
 //town read routes

@@ -80,9 +80,9 @@ class UserController extends Controller
         $request->validate([
             'id' => 'required',
             'name' => 'required|string',
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'townid' => 'required|integer'
+            'email' => 'required|string|email|unique',
+            'password' => 'required|string|confirmed',
+            'townid' => 'required|integer|exists:towns,id'
         ]);
 
         $user = User::find($request->input(key: 'id'));
@@ -164,11 +164,19 @@ class UserController extends Controller
             $token = $user->createToken('usertoken')->plainTextToken;
 
             $response = [
-                'requestdata' => $user,
+                'requestdata' => $user->id,
                 'token' => $token
             ];
 
             return response($response, 201);
         }
+    }
+
+    function userlogout(){
+        auth()->user()->tokens()->delete();
+
+        return response([
+            'message' => 'Logged out'
+        ], 202);
     }
 }
